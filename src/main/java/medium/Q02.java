@@ -38,49 +38,75 @@ public class Q02 {
      * @param l2
      * @return
      */
-    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+    public static ListNode addTwoNumbers(ListNode l1, ListNode l2) {
         ListNode head=new ListNode(0);
         ListNode f=head;
         int etra=0;
         ListNode p=l1;
-        ListNode q=l1;
+        ListNode q=l2;
         while (p!=null&&q!=null){
             //加法进位的逻辑
             ListNode newhere = new ListNode((p.val + q.val+etra) % 10);
-            etra=(p.val+q.val+etra)>10?1:0;
+            etra=(p.val+q.val+etra)>=10?1:0;
             f.next=newhere;
             f=f.next;
             p=p.next;
             q=q.next;
         }
-        if(p==null&&q!=null){
+        while (p==null&&q!=null){
             ListNode newhere = new ListNode(( q.val+etra) % 10);
-            etra=(q.val+etra)>10?1:0;
+            etra=(q.val+etra)>=10?1:0;
             f.next=newhere;
             f=f.next;
             q=q.next;
         }
-        else if(q==null&&p!=null){
-
+       while (q==null&&p!=null){
             ListNode newhere = new ListNode(( p.val+etra) % 10);
             f.next=newhere;
             f=f.next;
-            etra=(p.val+etra)>10?1:0;
+            etra=(p.val+etra)>=10?1:0;
+            p=p.next;
         }
-        else {
-            ListNode newhere = new ListNode(etra % 10);
-            f.next=newhere;
-            f=f.next;
-        }
+            if(etra!=0){
+                ListNode newhere = new ListNode(etra % 10);
+                f.next=newhere;
+            }
+
         return head.next;
     }
+
+    /**
+     * 专业题解
+     * @param
+     */
+    public ListNode addTwoNumbers02(ListNode l1, ListNode l2) {
+        ListNode dummyHead = new ListNode(0);
+        ListNode p = l1, q = l2, curr = dummyHead;
+        int carry = 0;
+        while (p != null || q != null) {
+            int x = (p != null) ? p.val : 0;
+            int y = (q != null) ? q.val : 0;
+            int sum = carry + x + y;
+            carry = sum / 10;
+            curr.next = new ListNode(sum % 10);
+            curr = curr.next;
+            if (p != null) p = p.next;
+            if (q != null) q = q.next;
+        }
+        if (carry > 0) {
+            curr.next = new ListNode(carry);
+        }
+        return dummyHead.next;
+    }
+
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         while (scanner.hasNext()){
-            String[] split = scanner.nextLine().split(",");
-            int[] ints = EncodeConvert.arrayString2Integer(split);
-            int i = Integer.parseInt(scanner.nextLine());
-            PrintUtils.printArray(addTwoNumbers(ints,i));
+            ListNode listNode01 = EncodeConvert.String2ListNode(scanner.nextLine(), ",");
+            ListNode listNode02 = EncodeConvert.String2ListNode(scanner.nextLine(), ",");
+            ListNode result = Q02.addTwoNumbers(listNode01, listNode02);
+            PrintUtils.printListNode(result);
 
         }
     }
